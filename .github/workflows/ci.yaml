@@ -1,0 +1,87 @@
+---
+name: CI
+
+# yamllint disable-line rule:truthy
+on:
+  [push, workflow_dispatch]
+
+env:
+  # The version of caching we are using. This can be upgraded if we
+  # significantly change CI to the point where old caches become irrelevant.
+  CACHE_VERSION: 0
+  # Default Python version.
+  DEFAULT_PYTHON: 3.11
+  # Location of the pre-commit cache. This is set by pre-commit, not us!
+  PRE_COMMIT_CACHE: ~/.cache/pre-commit
+
+# Cancels this run if a new one referring to the same object and same workflow
+# is requested
+concurrency:
+  group: >
+    ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code from GitHub
+        uses: actions/checkout@v3.0.2
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+          cache: 'pip'
+
+      - name: Install pip dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pre-commit
+
+      - name: Restore cache for pre-commit
+        id: restore-pre-commit-cache
+        uses: actions/cache@v4.0.2
+        with:
+          path: ${{ env.PRE_COMMIT_CACHE }}
+          key: pre-commit-${{ runner.os }}-${{ env.DEFAULT_PYTHON }}-${{ env.CACHE_VERSION }}-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            pre-commit-${{ runner.os }}-${{ env.DEFAULT_PYTHON }}-${{ env.CACHE_VERSION }}-
+
+      - name: Install pre-commit
+        if: steps.restore-pre-commit-cache.outputs.cache-hit != 'true'
+        run: |
+          pre-commit install
+
+      - name: Run pre-commit
+        if: github.ref != 'refs/heads/main'
+        run: |
+          pre-commit run --all-files --show-diff-on-failure
+
+      - name: Run pre-commit
+        if: github.ref == 'refs/heads/main'
+        run: |
+          SKIP=no-commit-to-branch pre-commit run --all-files --show-diff-on-failure
+
+      - name: Run tests
+        env:
+          CODIO_CLIENT_ID: ${{ secrets.CODIO_CLIENT_ID }}
+          CODIO_CLIENT_SECRET: ${{ secrets.CODIO_CLIENT_SECRET }}
+          CANVAS_API_TOKEN: ${{ secrets.CANVAS_API_TOKEN }}
+          CANVAS_URL: ${{ secrets.CANVAS_URL }}
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          GUILD_ID: ${{ secrets.GUILD_ID }}
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DEV_MODE: ${{ secrets.DEV_MODE }}
+          QUALTRICS_API_TOKEN: ${{ secrets.QUALTRICS_API_TOKEN }}
+          QUALTRICS_API_DATACENTER: ${{ secrets.QUALTRICS_API_DATACENTER }}
+          QUALTRICS_SURVEY_ID: ${{ secrets.QUALTRICS_SURVEY_ID }}
+          QUALTRICS_FILTER_ID: ${{ secrets.QUALTRICS_FILTER_ID }}
+          GRADESCOPE_EMAIL: ${{ secrets.GRADESCOPE_EMAIL }}
+          GRADESCOPE_PASSWORD: ${{ secrets.GRADESCOPE_PASSWORD }}
+          GRADESCOPE_COURSE_ID: ${{ secrets.GRADESCOPE_COURSE_ID }}
+          TOKEN_FOR_GH: ${{ secrets.TOKEN_FOR_GH }}
+        run: |
+          python -m pytest

@@ -1,0 +1,20 @@
+target-version = "py311"
+
+[lint]
+ignore = [
+    "E501", # Line length
+    "RUF012", # Requiring ClassVar
+]
+
+extend-select = [
+    "UP", # pyupgrade
+    "I", # isort
+    "RUF", # ruff-specific rules
+    "RSE", # flake8-raise (exceptions)
+    "COM", # flake8-comma
+    "C4", # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]
