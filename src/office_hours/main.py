@@ -67,7 +67,7 @@ class OfficeHoursCog(commands.Cog):
     @app_commands.default_permissions(manage_messages=True)
     @app_commands.command(
         name="overwrite",
-        description="Overwrite a member's position in the queue. Remember: use 1-based indexing.",
+        description="Overwrite a member's position in the queue. Remember: use zero-based indexing.",
     )
     async def insert_at_index(
         self,
