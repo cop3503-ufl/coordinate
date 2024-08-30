@@ -159,7 +159,7 @@ class CoordinateBotErrorHandler:
             app_commands.CommandInvokeError | commands.CommandInvokeError,
         ):
             return (
-                f"This command experienced a general error of type `{error.original.__class__}`.",
+                f"This command experienced a general error of type `{error.original.__class__}`: {error.original!s}.",
                 delay,
             )
         elif isinstance(
@@ -228,7 +228,7 @@ class CoordinateBotErrorHandler:
         return (
             error_messages.get(
                 error.__class__,
-                f"Ups, an unhandled error occurred: `{error.__class__}`.",
+                f"Ups, an unhandled error occurred: `{error.__class__}` ({error!s}).",
             ),
             delay,
         )
