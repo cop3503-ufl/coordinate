@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import discord
 from discord import app_commands
@@ -432,23 +432,103 @@ class LatePassView(CoordinateBotView):
         )
 
 
+class WarningTypeSelectView(COP3503CBotView):
+
+    selected_value: str | None = None
+
+    @discord.ui.select(
+        options=[
+            discord.SelectOption(
+                label="Shared Too Much Code",
+                value="shared_too_much_code",
+                description="Shared too much code in public channels.",
+                emoji="👩‍💻",
+            ),
+            discord.SelectOption(
+                label="Not Respectful",
+                value="respect",
+                description="Was not respectful in chat.",
+                emoji="🤝",
+            ),
+            discord.SelectOption(
+                label="Bullying",
+                value="bully",
+                description="Engaged in bullying behavior.",
+                emoji="👎",
+            ),
+            discord.SelectOption(
+                label="Profanity",
+                value="profanity",
+                description="Used profanity in chat.",
+                emoji="🤬",
+            ),
+            discord.SelectOption(
+                label="Controversial",
+                value="controversial",
+                description="Discussed controversial topics in chat.",
+                emoji="🔥",
+            ),
+            discord.SelectOption(
+                label="Off-Topic",
+                value="offtopic",
+                description="Discussed off-topic subjects in chat.",
+                emoji="🚫",
+            ),
+            discord.SelectOption(
+                label="Spam",
+                value="spam",
+                description="Spammed the chat.",
+                emoji="🚮",
+            ),
+            discord.SelectOption(
+                label="Promoting",
+                value="promo",
+                description="Promoted external services or products in chat.",
+                emoji="📢",
+            ),
+        ],
+        placeholder="Select a warning type...",
+    )
+    async def select_type(
+        self,
+        interaction: discord.Interaction,
+        select: discord.ui.Select,
+    ):
+        self.selected_value = select.values[0]
+        await interaction.response.defer()
+        self.stop()
+
+
 class StudentCog(commands.Cog):
     def __init__(self, bot: CoordinateBot):
         self.bot = bot
-        self.ctx_menu = app_commands.ContextMenu(
+        self.ctx_menu_user_info = app_commands.ContextMenu(
             name="Student Info",
             callback=self.user_info,  # type: ignore
+        )
+        self.ctx_menu_warn_msg = app_commands.ContextMenu(
+            name="Warn Student/Delete Message",
+            callback=self.send_warning_ctx_menu_msg,
+        )
+        self.ctx_menu_warn_user = app_commands.ContextMenu(
+            name="Warn Student",
+            callback=self.send_warning_ctx_menu_user,
         )
         self.cmd_menu = app_commands.Command(
             name="student",
             callback=self.user_info,
             description="Looks up information about a given student.",
         )
-        self.bot.tree.add_command(self.ctx_menu)
+        self.bot.tree.add_command(self.ctx_menu_user_info)
         self.bot.tree.add_command(self.cmd_menu)
+        self.bot.tree.add_command(self.ctx_menu_warn_msg)
+        self.bot.tree.add_command(self.ctx_menu_warn_user)
 
     async def cog_unload(self) -> None:
-        self.bot.tree.remove_command(self.ctx_menu.name, type=self.ctx_menu.type)
+        self.bot.tree.remove_command(
+            self.ctx_menu_user_info.name,
+            type=self.ctx_menu_user_info.type,
+        )
 
     async def generate_embed(self, member: discord.Member, user: User) -> discord.Embed:
         embed = discord.Embed(
@@ -546,37 +626,110 @@ class StudentCog(commands.Cog):
                 view=view,
             )
 
-    @commands.command()
-    @commands.has_any_role("TA/PM", "Professor")
-    async def studentcode(self, ctx: commands.Context):
-        message = "We kindly request that you do not post code you have written in public channels to maintain academic integrity in the course. Sharing code publicly could inadvertently lead to plagiarism, which puts both you and your fellow students at risk.\n\nPlease only send very small portions of your developed code in public channels. If you need help with your specific solution, please visit office hours, where you can receive personal feedback from our amazing course staff!"
+    def _get_warning_message(self, warning_type: str) -> str:
+        warnings = {
+            "shared_too_much_code": "We kindly request that you do not post code you have written in public channels to maintain academic integrity in the course. Sharing code publicly could inadvertently lead to plagiarism, which puts both you and your fellow students at risk.\n\nPlease only send very small portions of your developed code in public channels. If you need help with your specific solution, please visit office hours, where you can receive personal feedback from our amazing course staff!",
+            "respect": "Please please be respectful to your fellow students and course staff. Please keep the conversation respectful and professional.",
+            "bully": "We have a zero-tolerance policy for bullying behavior. Please refrain from engaging in any form of bullying, harassment, or intimidation. Treat all members of the community with respect and kindness",
+            "profanity": "We kindly request that you do not use profanity in the chat. Please keep the conversation respectful and professional.",
+            "controversial": "We kindly request that you avoid discussing controversial topics in the chat. Please keep the conversation respectful and professional.",
+            "offtopic": f"We kindly request that you keep the conversation on-topic. If you have any non-course related discussions, please use {self.bot.random_ch.mention}.",
+            "spam": f"We kindly request that you do not spam the chat. Please keep the conversation relevant and avoid excessive posting. If you have any non-course related discussions, please use {self.bot.random_ch.mention}.",
+            "promo": f"We kindly request that you do not promote external services or products in the chat. Please keep the conversation relevant and avoid excessive posting.\nIf you have any non-course related discussions, please use {self.bot.random_ch.mention}.",
+        }
+        return warnings.get(warning_type, "No warning message found.")
 
-        # If in forums post, delete original forums post and ping the student in the
-        # forum thread to let them know that posting code is not acceptable.
-        if isinstance(ctx.channel, discord.Thread):
-            starter_message = ctx.channel.starter_message
-            if not starter_message:
-                starter_message = await ctx.channel.fetch_message(ctx.channel.id)
-
-            await starter_message.delete()
-            await ctx.reply(f"{starter_message.author.mention}: {message}")
-
-        # If in a reply, find original message, delete it, and send same message
-        elif (
-            ctx.message.type == discord.MessageType.reply
-            and ctx.message.reference
-            and ctx.message.reference.message_id
-        ):
-            starter_message = await ctx.channel.fetch_message(
-                ctx.message.reference.message_id,
+    async def _warning_ask_and_complete(
+        self,
+        interaction: discord.Interaction,
+        offender: discord.User | discord.Member,
+        message: discord.Message | None,
+    ):
+        view = WarningTypeSelectView()
+        ask_msg = await interaction.user.send(
+            "Which warning would you like to send the student?",
+            view=view,
+        )
+        await interaction.response.send_message(
+            f"[Please click here to select a warning to send to {offender.display_name}]({ask_msg.jump_url}).",
+            ephemeral=True,
+        )
+        await view.wait()
+        warning_type = str(view.selected_value)
+        warning_message = self._get_warning_message(warning_type)
+        if message:
+            await message.delete()
+        try:
+            await offender.send(f"**Warning:** {warning_message}")
+            await ask_msg.reply(
+                content=f"Sent a warning to {offender.mention} about the selected topic and deleted the message.",
             )
-            await starter_message.delete()
-            await ctx.reply(f"{starter_message.author.mention}: {message}")
+        except discord.Forbidden:
+            await ask_msg.reply(
+                content=f"Could not send a warning to {offender.mention} because they have direct messages disabled. You will need to contact them in another way.",
+            )
 
+    @app_commands.checks.has_any_role("TA/PM", "Professor")
+    async def send_warning_ctx_menu_msg(
+        self,
+        interaction: discord.Interaction,
+        message: discord.Message,
+    ):
+        await self._warning_ask_and_complete(interaction, message.author, message)
+
+    @app_commands.checks.has_any_role("TA/PM", "Professor")
+    async def send_warning_ctx_menu_user(
+        self,
+        interaction: discord.Interaction,
+        user: discord.User,
+    ):
+        await self._warning_ask_and_complete(interaction, user, None)
+
+    @app_commands.checks.has_any_role("TA/PM", "Professor")
+    @app_commands.command(
+        name="warning",
+        description="Warns a student about a specific topic.",
+    )
+    @app_commands.describe(
+        member="The student to warn.",
+        warning_type="The type of warning to issue.",
+    )
+    async def warning(
+        self,
+        interaction: discord.Interaction,
+        member: discord.Member,
+        warning_type: Literal[
+            "shared_too_much_code",
+            "not_respectful",
+            "bullying",
+            "profanity",
+            "controversial",
+            "offtopic",
+            "spam",
+            "promoting",
+        ],
+    ):
+        message = self._get_warning_message(warning_type)
+        # If the student shares code in a thread, we should make sure it gets deleted
+        if warning_type == "shared_too_much_code" and isinstance(
+            interaction.channel,
+            discord.Thread,
+        ):
+            starter_message = interaction.channel.starter_message
+            if not starter_message:
+                starter_message = await interaction.channel.fetch_message(
+                    interaction.channel.id,
+                )
+            if starter_message:
+                await starter_message.delete()
+                await interaction.response.send_message(
+                    f"{starter_message.author.mention}: {message}",
+                )
         else:
-            await ctx.reply(
-                "Please use this command in a reply to a student's message, or in a questions thread to delete the original message.",
-                delete_after=10,
+            await member.send(message)
+            await interaction.response.send_message(
+                "Thanks! The student has been warned.",
+                ephemeral=True,
             )
 
     @commands.command()
