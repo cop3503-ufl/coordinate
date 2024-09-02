@@ -121,7 +121,10 @@ class OfficeHoursChannelManager:
             logger.info(f"Connected to {voice_channel.name} for time control reminder.")
             # Time delay to let people quiet down
             await asyncio.sleep(1)
-            source = discord.FFmpegPCMAudio(file_path)
+            source = discord.PCMVolumeTransformer(
+                discord.FFmpegPCMAudio(file_path),
+                volume=0.5,
+            )
             if not voice_client.is_playing():
                 voice_client.play(
                     source,
