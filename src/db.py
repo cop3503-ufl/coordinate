@@ -1239,6 +1239,15 @@ class Database(AsyncSession):
 
     # Sessions
     async def create_new_session(self, student_id: int, preferences: list[str]) -> None:
+        if not (await self.get_student(discord_id=student_id)):
+            member = await self.bot.get_member(student_id)
+            await self.add_student(
+                member=member,
+                canvas_id=99999999,
+                ufid=99999999,
+                official_name=member.display_name,
+                chosen_name=member.display_name,
+            )
         session = OfficeHoursSession(
             student_id=student_id,
             preferences=preferences,

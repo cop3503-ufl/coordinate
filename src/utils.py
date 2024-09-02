@@ -32,7 +32,7 @@ class DateConverter(commands.Converter):
             )
 
 
-def parse_datetime(dt: str) -> datetime.datetime:
+def parse_datetime(dt: str, allow_past: bool = False) -> datetime.datetime:
     """
     Attempts to parse a datetime string into a datetime. If the conversion cannot be performed, a ValueError is raised.
 
@@ -72,7 +72,7 @@ def parse_datetime(dt: str) -> datetime.datetime:
                     datetime.datetime,
                     "Found a date component, but no time component. What time are you referring to?",
                 )
-    if res <= datetime.datetime.now().astimezone():
+    if res <= datetime.datetime.now().astimezone() and not allow_past:
         raise FormValidationError(
             dt,
             datetime.datetime,

@@ -137,7 +137,10 @@ class AddOfficeHoursModal(MethodOHModal):
         if self.discord_uid:
             async with self.bot.db_factory() as db:
                 user = await db.get_staff_member(id=self.discord_uid)
-        start = parse_datetime(self.start_time.value)
+        start = parse_datetime(
+            self.start_time.value,
+            allow_past=await self.bot.is_course_lead(interaction.user),
+        )
         end = start + datetime.timedelta(hours=float(self.length.value))
 
         async with self.bot.db_factory() as db:
@@ -338,7 +341,10 @@ class MoveOfficeHoursModal(MethodOHModal):
                 user = await db.get_staff_member(id=self.discord_uid)
 
         # Determine new time
-        start = parse_datetime(self.new_time.value)
+        start = parse_datetime(
+            self.new_time.value,
+            allow_past=await self.bot.is_course_lead(interaction.user),
+        )
         delta = datetime.timedelta(hours=float(self.length.value))
         end = start + delta
 
