@@ -1,8 +1,4 @@
-# Custom .gitignore files start here:
-throttle.ctrl
-apicache-py3/
-*password*
-.DS_Store
+*.log.*
 pgdata/
 
 # Python gitignore template (referenced from https://github.com/github/gitignore/blob/main/Python.gitignore)
