@@ -184,7 +184,7 @@ class ThankYouSelect(discord.ui.Select, SessionFetcher):
         embed.add_field(name="Thank You Message", emoji="💌", value=full_statement)
         await self.bot.feedback_channel.send(embed=embed)
         await interaction.response.send_message(
-            "Thank you, your feedback was recorded! We appreicate you filling out this form - this helps us improve our setup and bring it to other educational environments!",
+            "Thank you, your feedback was recorded! We appreciate you filling out this form - this helps us improve our setup and bring it to other educational environments!",
         )
 
 

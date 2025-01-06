@@ -399,9 +399,9 @@ class CoordinateBot(commands.Bot):
         self.gradescope = Gradescope()
         await self.gradescope.setup()
         self.codio = CodioHelper(
-            CODIO_CLIENT_ID,
-            CODIO_CLIENT_SECRET,
-            CODIO_COURSE_ID,
+            str(CODIO_CLIENT_ID),
+            str(CODIO_CLIENT_SECRET),
+            str(CODIO_COURSE_ID),
             self.session,
         )
         self.qualtrics = Qualtrics(self.session)

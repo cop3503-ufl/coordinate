@@ -27,7 +27,7 @@ async def test_gradescope_assignments(gradescope_client: Gradescope):
     assignment = assignments[0]
     assert assignment.title == "Testing Assignment 1"
     assert assignment.due_date is not None
-    utc_due_date = assignment.due_date.astimezone(datetime.timezone.utc)
+    utc_due_date = assignment.due_date.astimezone(datetime.UTC)
     assert utc_due_date == datetime.datetime(
         2024,
         6,
@@ -35,5 +35,5 @@ async def test_gradescope_assignments(gradescope_client: Gradescope):
         16,
         56,
         tzinfo=pytz.timezone("US/Eastern"),
-    ).astimezone(datetime.timezone.utc)
+    ).astimezone(datetime.UTC)
     assert assignment.assignment_id == GRADESCOPE_TEST_ASSIGNMENT_ID

@@ -349,7 +349,11 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def prepareagain(self, ctx: commands.Context[CoordinateBot], course_code: str):
+    async def prepareagain(
+        self,
+        ctx: commands.Context[CoordinateBot],
+        course_code: str,
+    ):
         try:
             embed = discord.Embed(
                 title=f"Retaking {course_code}?",

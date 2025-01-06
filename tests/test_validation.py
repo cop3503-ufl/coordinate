@@ -38,7 +38,7 @@ def test_parse_dt():
             30,
             12,
             0,
-            tzinfo=datetime.timezone.utc,
+            tzinfo=datetime.UTC,
         ).astimezone()
     )
     assert (

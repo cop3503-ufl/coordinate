@@ -368,7 +368,10 @@ class ExtensionApproveModal(ExtensionReasonModal):
             course_info.canvas_course_code,
         )
         course = await self.bot.canvas.get_course()
-        canvas_student = await self.bot.canvas.get_users(course, response.student_sys_id)
+        canvas_student = await self.bot.canvas.get_users(
+            course,
+            response.student_sys_id,
+        )
         assignments: list[ExtendableAssignment] = [
             ExtendableCanvasAssignment.from_assignment_override(
                 a,
@@ -608,7 +611,10 @@ class ExtensionsCog(commands.Cog):
         # Check 1: Ensure that student's ID and name match
         for resp in responses:
             users = await self.bot.canvas.find_canvas_users(resp.student_sys_id)
-            if not self.verify_enrollment(users, resp.student_sys_id, resp.name) and users:
+            if (
+                not self.verify_enrollment(users, resp.student_sys_id, resp.name)
+                and users
+            ):
                 logger.info(
                     f"Denying response {resp.id} by {resp.name} because your student ID and name do not match.",
                 )

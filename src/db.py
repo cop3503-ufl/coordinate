@@ -412,19 +412,19 @@ class Timeslot(Base):
 
     @property
     def end(self) -> datetime.datetime:
-        return self._end.replace(tzinfo=datetime.timezone.utc).astimezone()
+        return self._end.replace(tzinfo=datetime.UTC).astimezone()
 
     @end.setter
     def end(self, value: datetime.datetime) -> None:
-        self._end = value.astimezone(datetime.timezone.utc)
+        self._end = value.astimezone(datetime.UTC)
 
     @property
     def start(self) -> datetime.datetime:
-        return self._start.replace(tzinfo=datetime.timezone.utc).astimezone()
+        return self._start.replace(tzinfo=datetime.UTC).astimezone()
 
     @start.setter
     def start(self, value: datetime.datetime) -> None:
-        self._start = value.astimezone(datetime.timezone.utc)
+        self._start = value.astimezone(datetime.UTC)
 
     @property
     def schedule_formatted(self) -> str:
@@ -507,8 +507,8 @@ class Timeslot(Base):
         room: str | None = None,
         meeting_url: str | None = None,
     ):
-        self._start = start.astimezone(datetime.timezone.utc)
-        self._end = end.astimezone(datetime.timezone.utc)
+        self._start = start.astimezone(datetime.UTC)
+        self._end = end.astimezone(datetime.UTC)
         self.routine = routine
         self.method = method
         self.staff = staff
@@ -632,47 +632,45 @@ class OfficeHoursSession(Base):
 
     @property
     def entered(self) -> datetime.datetime:
-        return self._entered.replace(tzinfo=datetime.timezone.utc).astimezone()
+        return self._entered.replace(tzinfo=datetime.UTC).astimezone()
 
     @entered.setter
     def entered(self, value: datetime.datetime) -> None:
-        self._entered = value.astimezone(datetime.timezone.utc)
+        self._entered = value.astimezone(datetime.UTC)
 
     @property
     def end(self) -> datetime.datetime | None:
         return (
-            self._end.replace(tzinfo=datetime.timezone.utc).astimezone()
-            if self._end
-            else None
+            self._end.replace(tzinfo=datetime.UTC).astimezone() if self._end else None
         )
 
     @end.setter
     def end(self, value: datetime.datetime | None) -> None:
-        self._end = value.astimezone(datetime.timezone.utc) if value else None
+        self._end = value.astimezone(datetime.UTC) if value else None
 
     @property
     def start(self) -> datetime.datetime | None:
         return (
-            self._start.replace(tzinfo=datetime.timezone.utc).astimezone()
+            self._start.replace(tzinfo=datetime.UTC).astimezone()
             if self._start
             else None
         )
 
     @start.setter
     def start(self, value: datetime.datetime | None) -> None:
-        self._start = value.astimezone(datetime.timezone.utc) if value else None
+        self._start = value.astimezone(datetime.UTC) if value else None
 
     @property
     def left_queue(self) -> datetime.datetime | None:
         return (
-            self._left_queue.replace(tzinfo=datetime.timezone.utc).astimezone()
+            self._left_queue.replace(tzinfo=datetime.UTC).astimezone()
             if self._left_queue
             else None
         )
 
     @left_queue.setter
     def left_queue(self, value: datetime.datetime | None) -> None:
-        self._left_queue = value.astimezone(datetime.timezone.utc) if value else None
+        self._left_queue = value.astimezone(datetime.UTC) if value else None
 
     @property
     def queue_time(self) -> datetime.timedelta:
@@ -761,19 +759,19 @@ class AddOfficeHoursRequest(OfficeHoursRequest):
 
     @property
     def end(self) -> datetime.datetime:
-        return self._end.replace(tzinfo=datetime.timezone.utc).astimezone()
+        return self._end.replace(tzinfo=datetime.UTC).astimezone()
 
     @end.setter
     def end(self, value: datetime.datetime) -> None:
-        self._end = value.astimezone(datetime.timezone.utc)
+        self._end = value.astimezone(datetime.UTC)
 
     @property
     def start(self) -> datetime.datetime:
-        return self._start.replace(tzinfo=datetime.timezone.utc).astimezone()
+        return self._start.replace(tzinfo=datetime.UTC).astimezone()
 
     @start.setter
     def start(self, value: datetime.datetime) -> None:
-        self._start = value.astimezone(datetime.timezone.utc)
+        self._start = value.astimezone(datetime.UTC)
 
 
 class MoveOfficeHoursRequest(OfficeHoursRequest):
@@ -930,16 +928,16 @@ class DocumentEmbedding(Base):
     ):
         self.text = text
         self.source = source
-        self.added_at = added_at.astimezone(datetime.timezone.utc)
+        self.added_at = added_at.astimezone(datetime.UTC)
         self.embedding = embedding
 
     @property
     def added_at(self) -> datetime.datetime:
-        return self._added_at.replace(tzinfo=datetime.timezone.utc).astimezone()
+        return self._added_at.replace(tzinfo=datetime.UTC).astimezone()
 
     @added_at.setter
     def added_at(self, value: datetime.datetime) -> None:
-        self._added_at = value.astimezone(datetime.timezone.utc)
+        self._added_at = value.astimezone(datetime.UTC)
 
     def __str__(self) -> str:
         return f"DocumentEmbedding<(id={self.id}, source='{self.source}' text='{self.text[:15]}...')>"
@@ -1244,7 +1242,7 @@ class Database(AsyncSession):
             await self.add_student(
                 member=member,
                 canvas_id=99999999,
-                ufid=99999999,
+                student_sys_id=99999999,
                 official_name=member.display_name,
                 chosen_name=member.display_name,
             )
@@ -1537,7 +1535,9 @@ class Database(AsyncSession):
         )
 
         if not specific_request:
-            logger.warn(f"Found no office hours request with message id {message_id}")
+            logger.warning(
+                f"Found no office hours request with message id {message_id}",
+            )
             raise OfficeHoursRequestNotFound(message_id)
 
         return specific_request

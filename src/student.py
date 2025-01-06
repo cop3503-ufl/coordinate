@@ -67,7 +67,7 @@ class StudentAssignmentSelect(discord.ui.Select):
             due_at = datetime.datetime.strptime(
                 assignment["due_at"],
                 "%Y-%m-%dT%H:%M:%SZ",
-            ).replace(tzinfo=datetime.timezone.utc)
+            ).replace(tzinfo=datetime.UTC)
             embed.add_field(
                 name="Due Date",
                 value=discord.utils.format_dt(due_at, style="F"),
@@ -76,7 +76,7 @@ class StudentAssignmentSelect(discord.ui.Select):
             submitted_at = datetime.datetime.strptime(
                 submission["submitted_at"],
                 "%Y-%m-%dT%H:%M:%SZ",
-            ).replace(tzinfo=datetime.timezone.utc)
+            ).replace(tzinfo=datetime.UTC)
             embed.add_field(
                 name="Submitted At",
                 value=discord.utils.format_dt(submitted_at, style="F"),
@@ -432,7 +432,7 @@ class LatePassView(CoordinateBotView):
         )
 
 
-class WarningTypeSelectView(COP3503CBotView):
+class WarningTypeSelectView(CoordinateBotView):
 
     selected_value: str | None = None
 

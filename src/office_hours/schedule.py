@@ -405,8 +405,7 @@ class OfficeHoursSchedule(commands.Cog):
                     live_embed != oldest_two[1].embeds[0]
                     or not oldest_two[1].components
                 )
-                or live_embed != oldest_two[1].embeds[0]
-            ):
+            ) or live_embed != oldest_two[1].embeds[0]:
                 await oldest_two[1].edit(
                     embed=live_embed,
                     view=OfficeHoursJoinQueueView(self.bot, live=live_in_person),

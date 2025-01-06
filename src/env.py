@@ -56,4 +56,7 @@ GRADESCOPE_EMAIL = ensure_string("GRADESCOPE_EMAIL", required=False)
 GRADESCOPE_PASSWORD = ensure_string("GRADESCOPE_PASSWORD", required=False)
 GRADESCOPE_COURSE_ID = ensure_string("GRADESCOPE_COURSE_ID", required=False)
 GRADESCOPE_TEST_COURSE_ID = ensure_string("GRADESCOPE_TEST_COURSE_ID", required=False)
-GRADESCOPE_TEST_ASSIGNMENT_ID = ensure_string("GRADESCOPE_TEST_ASSIGNMENT_ID", required=False)
+GRADESCOPE_TEST_ASSIGNMENT_ID = ensure_string(
+    "GRADESCOPE_TEST_ASSIGNMENT_ID",
+    required=False,
+)
