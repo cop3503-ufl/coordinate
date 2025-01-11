@@ -47,14 +47,7 @@ username/password in the provided `docker-compose.yaml`, to prevent unauthorized
 access to the bot's database.
 
 ```bash
-$ cd ~
-$ git clone https://github.com/pgvector/pgvector
-$ cd pgvector
-$ docker build -t pgvector:16 .
-# navigate back to the project folder for your bot
-$ cd your-bot-folder
-$ docker-compose up # <-- Check that you see something like "database is ready to accept connections", then ctrl c to cancel
-$ docker-compose up -d # <-- Same as last command, just running in the background
+$ docker-compose up -d # <-- Run the database
 ```
 
 Log in to your new database using `psql mydb -h localhost -U <user>`
