@@ -37,7 +37,19 @@ def ensure_string(name: str | list[str], *, required: bool = True) -> str | None
 
 CANVAS_API_TOKEN = ensure_string("CANVAS_API_TOKEN")
 CANVAS_URL = ensure_string("CANVAS_URL")
-POSTGRES_URL = ensure_string("POSTGRES_URL")
+
+# Postgres
+# either supply the full URL:
+POSTGRES_URL = ensure_string("POSTGRES_URL", required=False)
+# or we will construct it:
+if not POSTGRES_URL:
+    POSTGRES_USER = ensure_string("POSTGRES_USER", required=True)
+    POSTGRES_PASSWORD = ensure_string("POSTGRES_PASSWORD", required=True)
+    POSTGRES_HOST = ensure_string("POSTGRES_HOST", required=True)
+    POSTGRES_PORT = ensure_string("POSTGRES_PORT", required=True)
+    POSTGRES_DB = ensure_string("POSTGRES_DB", required=True)
+    POSTGRES_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+
 GUILD_ID = int(ensure_string("GUILD_ID"))
 DISCORD_TOKEN = ensure_string("DISCORD_TOKEN")
 DEV_MODE = ensure_string("DEV_MODE").lower() == "true"

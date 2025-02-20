@@ -465,7 +465,7 @@ async def main():
     KB = 1024
     MB = 1024 * KB
     handler = logging.handlers.RotatingFileHandler(
-        filename="coordinate-bot.log",
+        filename="log/coordinate-bot.log",
         encoding="utf-8",
         maxBytes=32 * MB,
         backupCount=5,
