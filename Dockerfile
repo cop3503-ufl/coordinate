@@ -1,12 +1,11 @@
 FROM python:3.12-alpine
 WORKDIR /app
 
-RUN apk update
-
 # We need to install git for the gradescope-api requirement (which uses github)
-RUN apk add git
 # We need to install gcc for matplotlib
-RUN apk add build-base
+RUN apk add --no-cache \
+    git=2.47.2-r0 \
+    build-base=0.5-r3
 
 # Copy only the requirements file first (for caching)
 COPY requirements.txt .
