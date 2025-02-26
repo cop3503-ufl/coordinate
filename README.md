@@ -28,3 +28,10 @@ for students, including:
 ## Setup
 
 Ready to dive in? [Check out this page on how to setup Coordinate for yourself!](docs/setup.md)
+
+## License
+
+For licensing information, see [LICENSE](LICENSE). In summary, you are free to use
+this work without commercialization and must include the original license in any
+derivative works. Copyright is held by the University of Florida Research Foundation,
+Inc.
