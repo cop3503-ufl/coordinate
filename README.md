@@ -31,7 +31,7 @@ for students, including:
 
 ## Setup
 
-Ready to dive in? [Check out this page on how to setup Coordinate for yourself!](docs/setup.md)
+Ready to dive in? Check out our docs at: https://coordinate.cbrxyz.com!
 
 ## License
 
