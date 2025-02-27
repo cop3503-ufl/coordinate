@@ -121,10 +121,11 @@ class StaffMemberAddRoutineModal(MethodOHModal):
             next_semester=True,
         )
         if current_semester is None:
-            return await interaction.response.send_message(
+            await interaction.response.send_message(
                 "The bot has an experienced an error due to lack of relevant semesters. Please contact a bot developer.",
                 ephemeral=True,
             )
+            return
         assert isinstance(current_semester, Semester)
         parsed_time = parse_time(self.start_time.value)
 

@@ -680,16 +680,18 @@ class DelayOfficeHoursModal(OfficeHoursModal):
         user = await super().get_staff_member(interaction)
 
         if int(self.length.value) > 60:
-            return await interaction.response.send_message(
+            await interaction.response.send_message(
                 'You cannot delay your office hours by more than 60 minutes. Instead, please use a "Move" request, but note that this type of request will need approval from a professor.',
                 ephemeral=True,
             )
+            return
 
         if int(self.length.value) < 0:
-            return await interaction.response.send_message(
+            await interaction.response.send_message(
                 "You cannot delay your office hours by a negative amount of time.",
                 ephemeral=True,
             )
+            return
 
         new_start = self.time.start + datetime.timedelta(minutes=int(self.length.value))
         new_end = self.time.end + datetime.timedelta(minutes=int(self.length.value))

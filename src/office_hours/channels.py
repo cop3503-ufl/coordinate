@@ -40,7 +40,7 @@ class OfficeHoursChannelManager:
         in_person = timeslot.method == TimeslotMethod.INPERSON
         staff_oh_role = await self.bot.get_staff_oh_role(staff_member)
         permission_overwrites: dict[
-            discord.Role | discord.Member,
+            discord.Role | discord.Member | discord.Object,
             discord.PermissionOverwrite,
         ] = {
             self.bot.active_guild.default_role: discord.PermissionOverwrite(

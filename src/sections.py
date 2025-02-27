@@ -269,7 +269,7 @@ class CreateChannelButton(discord.ui.Button):
 
                 # Create section channel
                 overwrites: dict[
-                    discord.Role | discord.Member,
+                    discord.Role | discord.Member | discord.Object,
                     discord.PermissionOverwrite,
                 ] = {
                     interaction.guild.default_role: discord.PermissionOverwrite(

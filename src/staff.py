@@ -97,10 +97,11 @@ class StaffCog(commands.Cog):
             schedule = await db.get_staff()
         semester = semester_given_date(datetime.datetime.now(), next_semester=True)
         if semester is None:
-            return await interaction.response.send_message(
+            await interaction.response.send_message(
                 "No semester is currently active.",
                 ephemeral=True,
             )
+            return
         for staff_member in schedule:
             # If staff member has at least one office hours this semester, they are active
             for routine in staff_member.routines:

@@ -296,7 +296,7 @@ class GPT(commands.Cog):
                     await updated_event.wait()
 
         context = LlamaRequestContext(
-            similar_docs,
+            list(similar_docs),
             prev_messages,
             update_text_count_cb,
             thread,

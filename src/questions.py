@@ -352,8 +352,13 @@ class QuestionsCog(commands.Cog):
         thread_owner = thread.owner
         if not thread_owner:
             thread_owner = await self.bot.active_guild.fetch_member(thread.owner_id)
-        if thread.parent in self.bot.question_channels and not await self.bot.is_staff(
-            thread_owner,
+        if (
+            thread.parent
+            and thread.parent in self.bot.question_channels
+            and isinstance(thread.parent, discord.ForumChannel)
+            and not await self.bot.is_staff(
+                thread_owner,
+            )
         ):
             logger.info(
                 f"New questions post in #{thread.parent.name} by {thread.owner}: tagging with unanswered tag!",
@@ -430,6 +435,7 @@ class QuestionsCog(commands.Cog):
                 or potential_member == potential_thread.owner
             )
             and payload.emoji.name == "✅"
+            and isinstance(potential_thread.parent, discord.ForumChannel)
         ):
             relevant_tag = discord.utils.get(
                 potential_thread.parent.available_tags,

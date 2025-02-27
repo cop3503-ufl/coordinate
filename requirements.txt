@@ -3,7 +3,7 @@ typing_extensions==4.9.0
 numpy==1.26.4
 matplotlib>=3.9.0
 rich
-discord
+discord.py
 sqlalchemy[asyncio]
 asyncpg
 greenlet

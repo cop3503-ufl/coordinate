@@ -294,8 +294,10 @@ class OfficeHoursEventHandler(commands.Cog):
             staff_members = [
                 m for m in before.channel.members if await self.bot.is_staff(m)
             ]
-            if before.channel in self.bot.office_hours_cog.ready_to_close and (
-                not students and len(staff_members) <= 1
+            if (
+                before.channel in self.bot.office_hours_cog.ready_to_close
+                and (not students and len(staff_members) <= 1)
+                and isinstance(before.channel, discord.VoiceChannel)
             ):
                 doc = await self.bot.staff_doc_from_vc(before.channel)
                 logger.info(

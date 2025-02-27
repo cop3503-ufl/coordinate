@@ -2,6 +2,10 @@
 
 # Coordinate
 
+> [!NOTE]
+> Check out our recent publication on Coordinate at SIGCSE TS '25:
+> https://dl.acm.org/doi/10.1145/3641554.3701961
+
 Coordinate is a novel educational tool based on Discord. Coordinate is designed
 to help instructors and faculty manage large computer science courses. Coordinate
 automatically provides several features which are integral to the classroom experience
@@ -35,3 +39,23 @@ For licensing information, see [LICENSE](LICENSE). In summary, you are free to u
 this work without commercialization and must include the original license in any
 derivative works. Copyright is held by the University of Florida Research Foundation,
 Inc.
+
+## Citation
+
+You may use the following citation to reference Coordinate in your work:
+
+```
+@inproceedings{Brown2025,
+  series = {SIGCSE TS 2025},
+  title = {Coordinate: A Virtual Classroom Management Tool For Large Computer Science Courses Using Discord},
+  url = {http://dx.doi.org/10.1145/3641554.3701961},
+  DOI = {10.1145/3641554.3701961},
+  booktitle = {Proceedings of the 56th ACM Technical Symposium on Computer Science Education V. 1},
+  publisher = {ACM},
+  author = {Brown,  Cameron and Cruz Castro,  Laura},
+  year = {2025},
+  month = feb,
+  pages = {165–171},
+  collection = {SIGCSE TS 2025}
+}
+```
