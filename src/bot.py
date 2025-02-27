@@ -137,6 +137,9 @@ class CoordinateBot(commands.Bot):
         self.tasks = TaskManager()
         self._setup = asyncio.Event()
 
+    def is_setup(self) -> bool:
+        return self._setup.is_set()
+
     async def get_staff_oh_role(self, staff_member: StaffMember) -> discord.Role:
         """
         Return the OH role for a staff member that allows the student to share their
@@ -162,7 +165,8 @@ class CoordinateBot(commands.Bot):
             datetime.datetime.now(),
             next_semester=True,
         )
-        assert isinstance(semester, Semester)
+        if not isinstance(semester, Semester):
+            raise RuntimeError("Could not find an active or upcoming semester to use.")
         course_name = self.active_guild.name[:7]
         return semester.courses[course_name]
 
@@ -202,7 +206,8 @@ class CoordinateBot(commands.Bot):
             datetime.datetime.now(),
             next_semester=True,
         )
-        assert isinstance(current_semester, Semester)
+        if not isinstance(current_semester, Semester):
+            raise RuntimeError("Could not find an active or upcoming semester to use.")
         prefix, year = (
             current_semester.name[:2].lower(),
             str(current_semester.start.year)[2:],

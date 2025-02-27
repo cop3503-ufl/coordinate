@@ -242,7 +242,7 @@ class CoordinateBotErrorHandler:
         if error:
             logger.exception(f"{e_type}: {error} occurred in `{event}` event.")
             exc_format = "".join(traceback.format_exception(e_type, error, tb, None))
-            if self.discord_logging_desired(error):
+            if self.discord_logging_desired(error) and client.is_setup():
                 await client.bot_log_ch.send(
                     f"**{error.__class__.__name__}** occurred in a `{event}` event:\n"
                     f"```py\n{exc_format[:3900]}\n```",
@@ -260,7 +260,7 @@ class CoordinateBotErrorHandler:
         try:
             raise error
         except Exception:
-            if self.discord_logging_desired(error):
+            if self.discord_logging_desired(error) and ctx.bot.is_setup():
                 await ctx.bot.bot_log_ch.send(
                     f"**{error.__class__.__name__}** occurred in a command:\n"
                     f"```py\n{traceback.format_exc()[:3900]}\n```",
@@ -308,7 +308,8 @@ class CoordinateBotErrorHandler:
         # Attempt to log to channel, but only log errors not from our code
         if error.__class__.__module__ != __name__:
             with contextlib.suppress():
-                await interaction.client.bot_log_ch.send(
-                    f"**{error.__class__.__name__}** occurred in {channel_name} interaction by {interaction.user.mention}:\n"
-                    f"```py\n{traceback.format_exc()[:3900]}```",
-                )
+                if interaction.client.is_setup():
+                    await interaction.client.bot_log_ch.send(
+                        f"**{error.__class__.__name__}** occurred in {channel_name} interaction by {interaction.user.mention}:\n"
+                        f"```py\n{traceback.format_exc()[:3900]}```",
+                    )
