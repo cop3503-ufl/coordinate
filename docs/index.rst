@@ -8,11 +8,15 @@ Welcome to Coordinate's documentation!
 
 .. image:: ../assets/banner.jpeg
 
-Coordinate is a novel educational tool based on Discord. Coordinate is designed
-to help instructors and faculty manage large computer science courses.
-Coordinate automatically provides several features which are integral to the
-classroom experience for students, including authentication, office hours,
-extensions, and question management.
+.. rst-class:: lead
+
+    Coordinate is a novel educational tool based on Discord. Coordinate is designed
+    to help instructors and faculty manage large computer science courses.
+    Coordinate automatically provides several features which are integral to the
+    classroom experience for students, including authentication, office hours,
+    extensions, and question management.
+
+----
 
 .. toctree::
    :hidden:
