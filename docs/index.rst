@@ -19,10 +19,17 @@ Welcome to Coordinate's documentation!
 ----
 
 .. toctree::
+   :caption: Installation
+   :titlesonly:
    :hidden:
 
    setup
    docker
+
+.. toctree::
+   :caption: Sub-components
+   :titlesonly:
+   :hidden:
 
    qualtrics
 
