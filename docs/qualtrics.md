@@ -1,4 +1,4 @@
-## Qualtrics Integration
+# Qualtrics Integration
 
 Important Notes:
 * If you manually update the completion status in Data & Analysis, you will not

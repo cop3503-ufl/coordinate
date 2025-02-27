@@ -1,3 +1,5 @@
+# Setting up from source
+
 There are several steps you will need to follow to setup Coordinate on your
 own machine.
 
@@ -28,8 +30,7 @@ environment.
 
 1. Add a bot account in the [Discord Developers Portal](https://discord.com/developers/applications/).
    Create a new application and add a bot in the Bot section. There, get your bot token.
-2. Paste this link into your server, but replace `<APP_ID>` with the ID of your
-   application shown in Discord.
+2. Paste this link into your server, but replace `<APP_ID>` with the ID of your application shown in Discord.
 ```
 https://discord.com/api/oauth2/authorize?client_id=<APP_ID>&permissions=9887014579026&scope=bot
 ```
