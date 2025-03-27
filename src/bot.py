@@ -375,7 +375,7 @@ class CoordinateBot(commands.Bot):
             "src.questions",
             "src.staff",
             "src.student",
-            "src.gpt",
+#            "src.gpt",
         )
         for i, extension in enumerate(extensions):
             try:
