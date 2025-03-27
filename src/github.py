@@ -252,7 +252,7 @@ class GitHub:
         Creates an issue on the repo with the given title and body.
         """
         return await self.fetch(
-            "https://api.github.com/repos/cbrxyz/coordinate/issues",
+            "https://api.github.com/repos/cop3503-ufl/coordinate/issues",
             method="POST",
             json_data={
                 "title": issue_title,
