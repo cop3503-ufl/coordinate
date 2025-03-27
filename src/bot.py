@@ -28,7 +28,7 @@ from .env import (
     DISCORD_TOKEN,
     GITHUB_TOKEN,
     GUILD_ID,
-    NVIDIA_NGC_TOKEN,
+#    NVIDIA_NGC_TOKEN,
     POSTGRES_URL,
 )
 from .exceptions import CoordinateBotErrorHandler
@@ -36,7 +36,7 @@ from .extensions import ExtensionRequestView
 from .github import GitHub
 from .gradescope import Gradescope
 from .issues import GitHubIssueView
-from .llama import Llama
+#from .llama import Llama
 from .office_hours.alerts import CancelOfficeHoursView, OfficeHoursAlerts
 from .office_hours.approvals import OHApprovalView
 from .office_hours.breaks import BreakOHView
@@ -120,7 +120,7 @@ class CoordinateBot(commands.Bot):
     qualtrics: Qualtrics
     tasks: TaskManager
     github: GitHub
-    llama: Llama
+#    llama: Llama
 
     db_factory: DatabaseFactory
 
@@ -411,7 +411,7 @@ class CoordinateBot(commands.Bot):
         )
         self.qualtrics = Qualtrics(self.session)
         self.github = GitHub(session=self.session, auth_token=GITHUB_TOKEN)
-        self.llama = Llama(bot=self, api_token=NVIDIA_NGC_TOKEN)
+#        self.llama = Llama(bot=self, api_token=NVIDIA_NGC_TOKEN)
         await self.codio.setup()
 
     async def on_ready(self):
